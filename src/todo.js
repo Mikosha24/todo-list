@@ -4,7 +4,7 @@ export default function createTodo(title, description, dueDate, priority, comple
         id: crypto.randomUUID(), 
         title, 
         description, 
-        dueDate, 
+        dueDate: dueDate || "",
         priority, 
         complete,
     };
