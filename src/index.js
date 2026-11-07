@@ -2,8 +2,9 @@ import "./styles.css";
 
 import * as manager from "./app.js"; 
 import { getProjects, addProject, addTodoToProject } from "./app.js";
-import { renderProjects, renderTodos, initProjectListeners } from "./ui.js";
+import { renderProjects, renderTodos, initProjectListeners, initProjectForm, initTodoForm } from "./ui.js";
 
+window.manager = manager;
 // ---- TEMPORARY TEST DATA (delete later) ----
 const defaultId = getProjects()[0].id;
 const workId = addProject("Work");
@@ -21,5 +22,22 @@ renderTodos(getProjects(), currentProjectId);
 
 initProjectListeners((projectId) => {
   currentProjectId = projectId;
+  renderTodos(getProjects(), currentProjectId);
+});
+
+
+initProjectForm((name) =>{
+  const newProjectId = addProject(name);
+  if (!newProjectId) return;
+
+  currentProjectId = newProjectId;
+  renderProjects(getProjects());
+  renderTodos(getProjects(), currentProjectId);
+});
+
+initTodoForm((todoData) => {
+  const newTodoId = addTodoToProject(currentProjectId, todoData);
+  if (!newTodoId) return;
+
   renderTodos(getProjects(), currentProjectId);
 });

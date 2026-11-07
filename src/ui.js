@@ -55,3 +55,46 @@ export function renderTodos(projects, currentProjectId){
     }
 
 }
+
+
+// Recent, treba pozvati f-ju u index.js
+export function initProjectForm(onAdd){
+    const form = document.querySelector("#project-form");
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const name = form.elements.name.value.trim();   /* read the value from the input named "name" */;
+        if (!name) return;
+
+        onAdd(name);
+        /* clear the form */
+        form.reset();
+  });
+}
+
+export function initTodoForm(onAdd){
+    const form = document.querySelector("#todo-form");
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const title = form.elements.title.value.trim();
+        const description = form.elements.description.value.trim();
+        const dueDate = form.elements.dueDate.value;
+        const priority = form.elements.priority.value;
+
+        if (!title || !priority) return;
+
+        const todoData = {
+            title,
+            description,
+            dueDate,
+            priority,
+        };
+
+        onAdd(todoData);
+
+        form.reset();
+    });
+}
