@@ -1,0 +1,10 @@
+.complete span {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+#todo-list li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

@@ -30,27 +30,46 @@ export function initProjectListeners(onSelect){
 }
 
 export function renderTodos(projects, currentProjectId){
-   
     const projectTitle = document.querySelector("#project-title")
     const todoList = document.querySelector("#todo-list");
+
     projectTitle.textContent = "";
     todoList.textContent = "";
 
     const currentProject = projects.find((proj) => proj.id === currentProjectId);
     if (!currentProject) return;
+
     const todos = currentProject.todos;
 
     projectTitle.textContent = currentProject.name;
-    
 
     for(const todo of todos){
         const li = document.createElement("li");
-        const dueDateDisplay = todo.dueDate ? format(parseISO(todo.dueDate), "MMM d, yyyy") : "No due date";
-
-        li.textContent = `Task: ${todo.title}  Complete before: ${dueDateDisplay}`;
         li.dataset.id = todo.id;
         li.classList.add(`priority-${todo.priority}`);
+        if (todo.complete) li.classList.add("complete");
 
+        // toggle checkbox 
+        const toggle = document.createElement("input");
+        toggle.type = "checkbox";
+        toggle.checked = todo.complete;
+        toggle.dataset.action = "toggle";
+
+        // text, wrapped in a span so it can sit beside the controls
+        const dueDateDisplay = todo.dueDate 
+            ? format(parseISO(todo.dueDate), "MMM d, yyyy") 
+            : "No due date";
+        const text = document.createElement("span");
+        text.textContent = `Task: ${todo.title}  Complete before: ${dueDateDisplay}`;
+        
+        // delete button
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.textContent = "Delete";
+        deleteBtn.dataset.action = "delete";
+
+
+        li.append(toggle, text, deleteBtn);
         todoList.appendChild(li);
     }
 
