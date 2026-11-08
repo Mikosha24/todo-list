@@ -117,3 +117,16 @@ export function initTodoForm(onAdd){
         form.reset();
     });
 }
+
+export function initTodoListListeners(onAction){
+    const todoList = document.querySelector("#todo-list");
+
+    todoList.addEventListener("click", (e) =>{
+        const li = e.target.closest("li");
+        const todoControl = e.target.dataset.action;
+
+        if (!li || !todoControl) return; 
+
+        onAction(li.dataset.id, todoControl);
+    });
+}

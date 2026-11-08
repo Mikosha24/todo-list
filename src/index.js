@@ -1,8 +1,8 @@
 import "./styles.css";
 
 import * as manager from "./app.js"; 
-import { getProjects, addProject, addTodoToProject } from "./app.js";
-import { renderProjects, renderTodos, initProjectListeners, initProjectForm, initTodoForm } from "./ui.js";
+import { getProjects, addProject, addTodoToProject, deleteTodo, toggleComplete } from "./app.js";
+import { renderProjects, renderTodos, initProjectListeners, initProjectForm, initTodoForm, initTodoListListeners } from "./ui.js";
 
 window.manager = manager;
 // ---- TEMPORARY TEST DATA (delete later) ----
@@ -38,6 +38,20 @@ initProjectForm((name) =>{
 initTodoForm((todoData) => {
   const newTodoId = addTodoToProject(currentProjectId, todoData);
   if (!newTodoId) return;
+
+  renderTodos(getProjects(), currentProjectId);
+});
+
+initTodoListListeners((todoId, todoControl) =>{
+  if (todoControl === "delete"){
+    deleteTodo(currentProjectId, todoId);
+  }
+  else if (todoControl === "toggle"){
+    toggleComplete(currentProjectId, todoId)
+  }
+  else{
+    return;
+  }
 
   renderTodos(getProjects(), currentProjectId);
 });
