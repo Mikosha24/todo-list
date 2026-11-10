@@ -2,16 +2,51 @@ import createProject from "./project.js";
 import createTodo from "./todo.js";
 import { parseISO, isValid } from "date-fns";
 
-const projects = [];
+const STORAGE_KEY = "todo-projects";
 const editableFields = ["title", "description", "dueDate", "priority"];
 const allowedPriorities = ["low", "medium", "high"];
+const projects = loadProjects();
 
 export function getProjects(){
     return projects;
 }
+// Local Storage Persistance
+function saveProjects() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+}
 
-const defaultProject = createProject("Default");
-projects.push(defaultProject);
+function createDefaultProjects() {
+  return [createProject("Default")];
+}
+
+function looksLikeProjects(data) {
+  return (
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data.every(
+      (p) =>
+        p &&
+        typeof p.id === "string" &&
+        typeof p.name === "string" &&
+        Array.isArray(p.todos)
+    )
+  );
+}
+
+function loadProjects() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored === null) return createDefaultProjects();   // first visit
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (!looksLikeProjects(parsed)) return createDefaultProjects();
+    return parsed;
+  } catch (error) {
+    return createDefaultProjects();                      // broken JSON
+  }
+}
+// END of localStorage
+
 
 export function addProject(name){
     if (typeof name !== "string") return null;
@@ -20,6 +55,7 @@ export function addProject(name){
 
     const project = createProject(trimmed);
     projects.push(project);
+    saveProjects();  
 
     return project.id;
 }
@@ -35,6 +71,7 @@ export function addTodoToProject(projectId, todoData){
     const todo = createTodo(title, todoData.description, todoData.dueDate, todoData.priority);
 
     project.todos.push(todo);
+    saveProjects();  
 
     return todo.id;
 }
@@ -45,6 +82,7 @@ export function deleteTodo(projectId, todoId){
     const todoIndex = project.todos.findIndex((el) => el.id === todoId);
     if(todoIndex === -1){ return; }
     project.todos.splice(todoIndex, 1);
+    saveProjects();  
 }
 
 export function toggleComplete(projectId, todoId){
@@ -53,6 +91,7 @@ export function toggleComplete(projectId, todoId){
     const todo = project.todos.find((el) => el.id === todoId);
     if(!todo){ return; }
     todo.complete = !todo.complete;
+    saveProjects();  
 }
 
 function findProject(projectId){
@@ -84,6 +123,7 @@ export function updateTodo(projectId, todoId, changes){
     }
 
     Object.assign(todo, cleaned);
+    saveProjects();  
 
     return todo.id;
 }
