@@ -1,31 +1,21 @@
 import "./styles.css";
-
-import * as manager from "./app.js"; 
+ 
 import { getProjects, addProject, addTodoToProject, deleteTodo, toggleComplete, updateTodo } from "./app.js";
 import { renderProjects, renderTodos, initProjectListeners, initProjectForm, initTodoForm, initTodoListListeners, showEditForm, hideEditForm, initEditForm } from "./ui.js";
 
-
-// ---- TEMPORARY TEST DATA (delete later) ---- 
-/*
-window.manager = manager;
-const defaultId = getProjects()[0].id;
-const workId = addProject("Work");
-
-addTodoToProject(defaultId, { title: "Has a date", description: "", dueDate: "2026-11-20", priority: "high" });
-addTodoToProject(defaultId, { title: "No date", description: "", dueDate: "", priority: "low" });
-addTodoToProject(workId, { title: "Work task", description: "", dueDate: "2026-12-01", priority: "medium" });
-// ---- END TEST DATA ----
-*/
-
 let currentProjectId = getProjects()[0].id;   // the Default project
 
-renderProjects(getProjects());
-renderTodos(getProjects(), currentProjectId);
+function renderAll() {
+  renderProjects(getProjects(), currentProjectId);
+  renderTodos(getProjects(), currentProjectId);
+}
+
+renderAll();
 
 initProjectListeners((projectId) => {
   currentProjectId = projectId;
   hideEditForm();   
-  renderTodos(getProjects(), currentProjectId);
+  renderAll(); 
 });
 
 
@@ -35,8 +25,7 @@ initProjectForm((name) =>{
 
   currentProjectId = newProjectId;
   hideEditForm();   
-  renderProjects(getProjects());
-  renderTodos(getProjects(), currentProjectId);
+  renderAll(); 
 });
 
 initTodoForm((todoData) => {

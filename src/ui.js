@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 
-export function renderProjects(projects){
+export function renderProjects(projects, currentProjectId){
     const projectList = document.querySelector("#project-list");
     projectList.textContent = "";
 
@@ -8,7 +8,7 @@ export function renderProjects(projects){
         const li = document.createElement("li");
         li.textContent = project.name;
         li.dataset.id = project.id;
-
+        if (project.id === currentProjectId) li.classList.add("selected");
         projectList.appendChild(li);
     }
 }
@@ -140,6 +140,7 @@ export function initTodoListListeners(onAction){
 // Expand todo form
 
 export function showEditForm(todo) {
+  clearEditError();
   const panel = document.querySelector("#todo-details");
   const form = document.querySelector("#edit-form");
 
@@ -153,6 +154,7 @@ export function showEditForm(todo) {
 }
 
 export function hideEditForm() {
+  clearEditError();
   const panel = document.querySelector("#todo-details");
   const form = document.querySelector("#edit-form");
 
@@ -178,4 +180,18 @@ export function initEditForm(onSave) {
   });
 
   document.querySelector("#edit-cancel").addEventListener("click", hideEditForm);
+}
+
+// Error messages
+
+export function showEditError(message) {
+  const el = document.querySelector("#edit-error");
+  el.textContent = message;
+  el.hidden = false;
+}
+
+function clearEditError() {
+  const el = document.querySelector("#edit-error");
+  el.textContent = "";
+  el.hidden = true;
 }
