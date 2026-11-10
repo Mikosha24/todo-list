@@ -68,15 +68,21 @@ export function renderTodos(projects, currentProjectId){
         deleteBtn.textContent = "Delete";
         deleteBtn.dataset.action = "delete";
 
+        // edit button
 
-        li.append(toggle, text, deleteBtn);
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.textContent = "Edit";
+        editBtn.dataset.action = "edit";
+
+        li.append(toggle, text, editBtn, deleteBtn);
         todoList.appendChild(li);
     }
 
 }
 
 
-// Recent, treba pozvati f-ju u index.js
+
 export function initProjectForm(onAdd){
     const form = document.querySelector("#project-form");
 
@@ -129,4 +135,47 @@ export function initTodoListListeners(onAction){
 
         onAction(li.dataset.id, todoControl);
     });
+}
+
+// Expand todo form
+
+export function showEditForm(todo) {
+  const panel = document.querySelector("#todo-details");
+  const form = document.querySelector("#edit-form");
+
+  form.dataset.todoId = todo.id;          // remember which todo we're editing
+  form.elements.title.value = todo.title;
+  form.elements.description.value = todo.description;
+  form.elements.dueDate.value = todo.dueDate;
+  form.elements.priority.value = todo.priority;
+
+  panel.hidden = false;
+}
+
+export function hideEditForm() {
+  const panel = document.querySelector("#todo-details");
+  const form = document.querySelector("#edit-form");
+
+  form.reset();
+  delete form.dataset.todoId;
+  panel.hidden = true;
+}
+
+export function initEditForm(onSave) {
+  const form = document.querySelector("#edit-form");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const changes = {
+      title: form.elements.title.value.trim(),
+      description: form.elements.description.value.trim(),
+      dueDate: form.elements.dueDate.value,
+      priority: form.elements.priority.value,
+    };
+
+    onSave(form.dataset.todoId, changes);
+  });
+
+  document.querySelector("#edit-cancel").addEventListener("click", hideEditForm);
 }

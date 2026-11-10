@@ -1,8 +1,8 @@
 import "./styles.css";
 
 import * as manager from "./app.js"; 
-import { getProjects, addProject, addTodoToProject, deleteTodo, toggleComplete } from "./app.js";
-import { renderProjects, renderTodos, initProjectListeners, initProjectForm, initTodoForm, initTodoListListeners } from "./ui.js";
+import { getProjects, addProject, addTodoToProject, deleteTodo, toggleComplete, updateTodo } from "./app.js";
+import { renderProjects, renderTodos, initProjectListeners, initProjectForm, initTodoForm, initTodoListListeners, showEditForm, hideEditForm, initEditForm } from "./ui.js";
 
 window.manager = manager;
 // ---- TEMPORARY TEST DATA (delete later) ----
@@ -22,6 +22,7 @@ renderTodos(getProjects(), currentProjectId);
 
 initProjectListeners((projectId) => {
   currentProjectId = projectId;
+  hideEditForm();   
   renderTodos(getProjects(), currentProjectId);
 });
 
@@ -31,6 +32,7 @@ initProjectForm((name) =>{
   if (!newProjectId) return;
 
   currentProjectId = newProjectId;
+  hideEditForm();   
   renderProjects(getProjects());
   renderTodos(getProjects(), currentProjectId);
 });
@@ -43,8 +45,16 @@ initTodoForm((todoData) => {
 });
 
 initTodoListListeners((todoId, todoControl) =>{
+  if (todoControl === "edit") {
+    const project = getProjects().find((p) => p.id === currentProjectId);
+    const todo = project.todos.find((t) => t.id === todoId);
+    if (todo) showEditForm(todo);
+    return;                               // opening the form changes no data, so no re-render
+  }
+
   if (todoControl === "delete"){
     deleteTodo(currentProjectId, todoId);
+    hideEditForm();
   }
   else if (todoControl === "toggle"){
     toggleComplete(currentProjectId, todoId)
@@ -53,5 +63,13 @@ initTodoListListeners((todoId, todoControl) =>{
     return;
   }
 
+  renderTodos(getProjects(), currentProjectId);
+});
+
+initEditForm((todoId, changes) => {
+  const result = updateTodo(currentProjectId, todoId, changes);
+  if (!result) return;                    // rejected by the logic layer: leave the form open
+
+  hideEditForm();
   renderTodos(getProjects(), currentProjectId);
 });
