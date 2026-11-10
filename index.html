@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo List</title>
+<script defer src="main.js"></script></head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <h2>Projects</h2>
+      <ul id="project-list"></ul>
+
+      <form id="project-form">
+        <input type="text" name="name" placeholder="New project name" required />
+        <button type="submit">Add project</button>
+      </form>
+    </aside>
+
+    <main id="main">
+      <h2 id="project-title"></h2>
+      <ul id="todo-list"></ul>
+
+      <form id="todo-form">
+        <input type="text" name="title" placeholder="Title" required />
+        <input type="text" name="description" placeholder="Description" />
+        <input type="date" name="dueDate" />
+        <select name="priority">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button type="submit">Add todo</button>
+      </form>
+
+      <section id="todo-details" hidden>
+        <h3>Edit todo</h3>
+        <p id="edit-error" hidden></p>
+        <form id="edit-form">
+          <input type="text" name="title" placeholder="Title" required />
+          <input type="text" name="description" placeholder="Description" />
+          <input type="date" name="dueDate" />
+          <select name="priority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button type="submit">Save</button>
+          <button type="button" id="edit-cancel">Cancel</button>
+        </form>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
